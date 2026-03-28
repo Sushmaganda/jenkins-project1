@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "python-app"
+        CONTAINER_NAME = "my-container"
+    }
+
+    stages {
+
+        stage('Clone Code') {
+            steps {
+                git 'https://github.com/<your-repo>.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'docker run -d -p 5000:5000 --name test-container $IMAGE_NAME'
+                sh 'sleep 5'
+                sh 'curl http://localhost:5000'
+                sh 'docker rm -f test-container'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                docker rm -f $CONTAINER_NAME || true
+                docker run -d -p 5000:5000 --name $CONTAINER_NAME $IMAGE_NAME
+                '''
+            }
+        }
+    }
+}
