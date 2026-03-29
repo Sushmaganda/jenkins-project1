@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Hello ths is my first jenkins CI/CD project with webhooks"
+    return "Hello, this is my first Jenkins CI/CD project with webhooks.<br>And here’s another line of text!"
 
 if __name__ == "__main__":
     # Run on all interfaces so Docker can expose it
